@@ -16,7 +16,8 @@ async function kiemTraNhanVien (manv, chucdanh) {
           loainv: true,
         },
       });
-      if (nhanvien.loainv !== chucdanh) {
+
+      if (nhanvien.loainv.toLowerCase() !== chucdanh.toLowerCase()) {
         return false;
       }
     } catch (error) {
@@ -24,6 +25,7 @@ async function kiemTraNhanVien (manv, chucdanh) {
         throw error
     }
     return true;
+
 }
 
 async function kiemTraNhanVienTiepNhan(req, res, next) {
@@ -32,7 +34,8 @@ async function kiemTraNhanVienTiepNhan(req, res, next) {
     if (userData.type != "NV") {
       return next( new HttpError("Bạn không phải là nhân viên", 400));
     }
-    if (kiemTraNhanVien(userData.username, "Nhân viên tiếp nhận")){
+    if ( await kiemTraNhanVien(userData.username, "Nhân viên tiếp nhận")){
+
         return next ();
     }
     else return next (new HttpError("Bạn không phải là nhân viên tiếp nhận"), 400);
