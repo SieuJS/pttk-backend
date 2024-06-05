@@ -1,0 +1,42 @@
+{
+  "name": "abc-company",
+  "version": "1.0.0",
+  "description": "A back end server build for managing hiring and job listing. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SieuJS/pttk-backend.git"
+  },
+  "keywords": [
+    "system",
+    "design",
+    "joblisting",
+    "hiring",
+    "website",
+    "express",
+    "nodejs",
+    "prisma",
+    "posgresql"
+  ],
+  "author": "SieuJS and the teams",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SieuJS/pttk-backend/issues"
+  },
+  "homepage": "https://github.com/SieuJS/pttk-backend#readme",
+  "dependencies": {
+    "@prisma/client": "^5.15.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "env": "^0.0.2",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "prisma": "^5.15.0"
+  }
+}
