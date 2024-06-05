@@ -7,7 +7,7 @@ const prisma = new PrismaClient().$extends ({
             async taoNhanVien (manv , tennv, loainv) {
                 let tonTaiNhanvien ; 
                 try { 
-                    if (manv === null || tennv === null || loainv === null)
+                    if (!manv  || !tennv  || !loainv )
                         throw Error("Nhập thiếu dữ liệu")
                     tonTaiNhanvien = await this.findUnique({
                         where : {

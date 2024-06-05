@@ -10,6 +10,7 @@ async function createEmp (req, res, next) {
 
     const {empID, password, empName, empType } = req.body;
     let empAcc  ; 
+    
     try {
 
         empAcc = await NhanVien.taoNhanVien (empID, empName, empType);

@@ -5,7 +5,7 @@ const express = require('express')
 
 // import routes 
 const EmpRoute = require('./routes/emp.r');
-
+const CompRoute = require('./routes/company.r')
 // import model
 const HttpsError = require('./model/error.m');
 
@@ -17,6 +17,8 @@ const app = express();
 app.use(express.json());
 
 app.use('/api/emp', EmpRoute);
+
+app.use ('/api/company' ,CompRoute);
 
 
 // Error routing handling 

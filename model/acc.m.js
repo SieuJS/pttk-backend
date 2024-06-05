@@ -6,7 +6,6 @@ const prisma = new PrismaClient().$extends({
     model: {
         account : {
             async signUp(username , password, type) {
-
                 const existsAcc = await this.findUnique({
                     where : {
                         username : username
@@ -19,7 +18,7 @@ const prisma = new PrismaClient().$extends({
 
                 let createdAcc ;
                 try {
-                    createdAcc =  prisma.account.create({
+                    createdAcc = await prisma.account.create({
                         data : {
                             username, 
                             password : hashpw,
@@ -32,8 +31,8 @@ const prisma = new PrismaClient().$extends({
                 }
                 
                 return {
-                    username : existsAcc.username,
-                    type : existsAcc.type
+                    username : createdAcc.username,
+                    type : createdAcc.type
                 }
 
             },
