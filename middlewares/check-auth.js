@@ -1,4 +1,4 @@
-const HttpError = require('../models/http-error')
+const HttpError = require('../model/error.m')
 
 const jwt = require('jsonwebtoken')
 
@@ -24,7 +24,7 @@ module.exports = (req, res, next ) => {
         }
         const decodedToken = jwt.verify(token , privateKey);
         req.userData  =  {
-            decodedToken
+            ...decodedToken
         }  
         next();
 

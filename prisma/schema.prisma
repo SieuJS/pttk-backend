@@ -8,11 +8,8 @@ datasource db {
 }
 
 model doanhnghiep {
-  masothue     String  @id @db.VarChar(10)
-  tencongty    String? @db.VarChar(255)
-  nguoidaidien String? @db.VarChar(255)
-  diachi       String? @db.VarChar(255)
-  email        String? @db.VarChar(255)
+  masothue      String  @id @db.VarChar(10)
+  maphieudangky String? @db.VarChar(10)
 }
 
 model douutien {
@@ -55,6 +52,10 @@ model phieudangkythanhvien {
   ngaydangky       DateTime? @db.Date
   ngayxetduyet     DateTime? @db.Date
   masothue         String?   @db.VarChar(10)
+  tencongty        String?   @db.VarChar(255)
+  nguoidaidien     String?   @db.VarChar(255)
+  diachi           String?   @db.VarChar(255)
+  email            String?   @db.VarChar(255)
   nhanvientiepnhan String?   @db.VarChar(10)
 }
 
@@ -133,8 +134,9 @@ model yeucaudangtuyen {
 }
 
 model Account {
-  username String  @id @db.VarChar(200) @map("tentaikhoan")
-  password     String? @db.VarChar(200) @map("matkhau")
-  type      String? @db.VarChar(200) @map("loaitk")
+  username String  @id @map("tentaikhoan") @db.VarChar(200)
+  password String? @map("matkhau") @db.VarChar(200)
+  type     String? @map("loaitk") @db.VarChar(200)
+
   @@map("taikhoan")
 }

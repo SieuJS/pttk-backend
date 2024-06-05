@@ -34,7 +34,6 @@ const prisma = new PrismaClient().$extends({
                     username : createdAcc.username,
                     type : createdAcc.type
                 }
-
             },
             async signIn (username, password) {
                 const existsAcc = await this.findUnique({
