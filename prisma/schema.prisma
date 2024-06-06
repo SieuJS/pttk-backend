@@ -10,6 +10,10 @@ datasource db {
 model doanhnghiep {
   masothue      String  @id @db.VarChar(10)
   maphieudangky String? @db.VarChar(10)
+  tencongty     String? @unique
+  nguoidaidien  String?
+  diachi        String?
+  email         String?
 }
 
 model douutien {

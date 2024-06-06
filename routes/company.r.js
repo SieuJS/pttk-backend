@@ -2,7 +2,7 @@ const router = require('express').Router() ;
 const checkAuth = require ("../middlewares/check-auth")
 // import middlewares 
 const {kiemTraNhanVienTiepNhan} = require("../middlewares/check-nhanvien")
-const {tiepNhanPhieuDangKy} = require('../controller/company.c')
+const {tiepNhanPhieuDangKy, duyetDoanhNghiep} = require('../controller/company.c')
 
 router.get ('/', (req,res,next) => {
     res.status(200).json({
@@ -11,5 +11,7 @@ router.get ('/', (req,res,next) => {
 }) 
 
 router.post('/dangky',checkAuth,kiemTraNhanVienTiepNhan, tiepNhanPhieuDangKy )
+
+router.post('/duyetphieu/:maphieu', checkAuth , kiemTraNhanVienTiepNhan, duyetDoanhNghiep)
 
 module.exports = router ; 

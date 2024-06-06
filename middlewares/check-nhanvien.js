@@ -53,7 +53,6 @@ async function kiemTraNhanVienThanhToan (req, res,next) {
     else return next (new HttpError("Bạn không phải là nhân viên thanh toán"), 400);
 }
 
-
 module.exports ={
     kiemTraNhanVienTiepNhan,
     kiemTraNhanVienThanhToan

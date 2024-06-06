@@ -45,4 +45,59 @@ async function  tiepNhanPhieuDangKy (req, res, next ) {
         return next (new HttpsError("Lỗi không xác định khi tiếp nhận phiếu "), 500)
     }   
 }
-module.exports ={tiepNhanPhieuDangKy};
+
+async function duyetDoanhNghiep (req,res,next) {
+
+    const {maphieu} = req.params;
+    let sessionUser = req.userData ; 
+    try {
+        const phieuDangKy = await prisma.phieudangkythanhvien.findUnique({
+            where : {
+                maphieudangky : maphieu
+            },
+            select : { 
+                nhanvientiepnhan : true ,
+                masothue : true ,
+                ngayxetduyet : true
+            }
+        })
+        if (sessionUser.username.trim().toLowerCase() !== phieuDangKy.nhanvientiepnhan.trim().toLowerCase()) {
+            return next (new HttpsError("Bạn không phải là nhân viên đã tiếp nhận phiếu này", 400));
+        }
+
+        if (phieuDangKy.ngayxetduyet) {
+            return next (new HttpsError("Phiếu đã được duyệt rồi",400))
+        }
+        await prisma.phieudangkythanhvien.update({
+            where : {
+                maphieudangky : maphieu
+            },
+            data : {
+                ngayxetduyet : new Date()
+            }
+        })
+
+        const doanhnghiep = await prisma.doanhnghiep.create({
+            data : {
+                masothue : phieuDangKy.masothue,
+                maphieudangky : phieuDangKy.maphieudangky,
+                tencongty : phieuDangKy .tencongty,
+                nguoidaidien : phieuDangKy.nguoidaidien,
+                diachi : phieuDangKy.diachi ,
+                email : phieuDangKy.email
+            }
+        })
+    
+        return res.status(500).json({message : "Duyệt phiếu thành công", doanhnghiep })
+    }catch ( err) {
+        console.log("Company.c.js line 72", err);
+        return next (new HttpsError("Có lỗi khi duyệt phiếu"))
+    }
+
+}
+
+module.exports ={
+    tiepNhanPhieuDangKy,
+    duyetDoanhNghiep,
+
+};
