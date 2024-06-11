@@ -28,19 +28,26 @@ async function createEmp (req, res, next) {
     let accessToken = provideJWT(empAcc); 
 
     return res.status(200).json({
-        message : "Account created",
+        message : "Tạo tài khoản thành công",
         accessToken
     })
 }
 
 async function signIn (req, res,next) {
-    const {empID, password} = req.body ; 
+    const {username, password} = req.body ; 
     let account ;
+    let empAcc;
     try {
-        account = await Account.signIn(empID, password);
+        account = await Account.signIn(username, password);
+        empAcc = await NhanVien.findUnique({
+            where : {
+                manv : username
+            }
+        })
     }
     catch (err ) {
         // 406 - not accept 
+        console.log(err)
         return  next (new HttpsError(err.message, 406))
     }
 
@@ -48,9 +55,9 @@ async function signIn (req, res,next) {
 
     return res.status(200).json({
         accessToken,
-        message : "Sign in success"
+        account : empAcc,
+        message : "Đăng nhập thành công"
     })
-
 }
 
 

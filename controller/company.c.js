@@ -2,18 +2,23 @@ const { PrismaClient } = require("@prisma/client");
 const HttpsError = require("../model/error.m");
 
 const genID = require('../utils/unique-key-gen');
+const Account = require ('../model/acc.m')
 
 const prisma = new PrismaClient();
 
 
 async function  tiepNhanPhieuDangKy (req, res, next ) { 
     const {
-        masothue, tencongty, nguoidaidien, diachi, email
+        masothue, tencongty, nguoidaidien, diachi, email, matkhau
     } = req.body ; 
+
+    if (!masothue || !tencongty || !nguoidaidien || !diachi || !email ||!matkhau) {
+        return next (new HttpsError("Chưa đủ thông tin",422))
+    }
 
     let userData = req.userData;
     try{ 
-        let existsComp = await prisma.doanhnghiep.findUnique({
+        let existsComp = await prisma.phieudangkythanhvien.findFirst({
             where : {
                 masothue : masothue 
             }
@@ -36,8 +41,11 @@ async function  tiepNhanPhieuDangKy (req, res, next ) {
                 nhanvientiepnhan : userData.username
             }
         })
+
+        const tkDoanhNghiep = await Account.signUp(masothue,matkhau,'Doanh Nghiệp');
+
         return res.status(200).json({
-            message : "Lập phiếu thành công",
+            message : "Lập phiếu và tạo tài khoản thành công",
             phieuDangKy
         })
     }catch (error) {
@@ -54,11 +62,6 @@ async function duyetDoanhNghiep (req,res,next) {
         const phieuDangKy = await prisma.phieudangkythanhvien.findUnique({
             where : {
                 maphieudangky : maphieu
-            },
-            select : { 
-                nhanvientiepnhan : true ,
-                masothue : true ,
-                ngayxetduyet : true
             }
         })
         if (sessionUser.username.trim().toLowerCase() !== phieuDangKy.nhanvientiepnhan.trim().toLowerCase()) {

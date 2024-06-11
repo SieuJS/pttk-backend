@@ -2,10 +2,11 @@
 require('dotenv').config();
 
 const express = require('express')
-
+const cors = require('cors')
 // import routes 
 const EmpRoute = require('./routes/emp.r');
-const CompRoute = require('./routes/company.r')
+const CompRoute = require('./routes/company.r');
+const AccRoute = require('./routes/acc.r')
 // import model
 const HttpsError = require('./model/error.m');
 
@@ -13,8 +14,12 @@ const HttpsError = require('./model/error.m');
 const PORT = process.env.PORT;
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
+
+
+app.use('/api/auth', AccRoute);
 
 app.use('/api/emp', EmpRoute);
 
