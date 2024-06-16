@@ -6,7 +6,8 @@ const cors = require('cors')
 // import routes 
 const EmpRoute = require('./routes/emp.r');
 const CompRoute = require('./routes/company.r');
-const AccRoute = require('./routes/acc.r')
+const AccRoute = require('./routes/acc.r');
+const RegisSheetRoute = require('./routes/regis-sheet.r')
 // import model
 const HttpsError = require('./model/error.m');
 
@@ -25,6 +26,7 @@ app.use('/api/emp', EmpRoute);
 
 app.use ('/api/company' ,CompRoute);
 
+app.use('/api/regis-sheet', RegisSheetRoute);
 
 // Error routing handling 
 /**

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config() ;
 const privateKey = process.env.PRIVATE_KEY; 
 
-module.exports = (req, res, next ) => {
+module.exports = function (req, res, next )  {
 
     if(req.method === "OPTIONS"){
         return next();
