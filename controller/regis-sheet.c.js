@@ -7,7 +7,7 @@ const prisma = new PrismaClient() ;
 const genID = require('../utils/unique-key-gen');
 const Account = require('../model/acc.m');
 const { paginate } = require('express-paginate');
-
+const provideJWT = require('../utils/access-token-generater')
 
 const getAll = async (req,res,next) => {
     let data ; 
@@ -115,7 +115,7 @@ const createSheet = async (req,res,next) => {
 
         if (existsComp) 
             return next (new HttpsError("Mã số thuế đã tồn tại!!!!", 400))
-        const {phieuDangKy,tkDoanhNghiep} = await prisma.$transaction(async (tx) => {
+        const {phieuDangKy,tkDoanhNghiep, accessToken} = await prisma.$transaction(async (tx) => {
             let maphieu = "PTV" + genID(); 
             let phieuDangKy;
             let tkDoanhNghiep;
@@ -133,13 +133,15 @@ const createSheet = async (req,res,next) => {
                 }
             });
             tkDoanhNghiep = await Account.signUp(masothue,matkhau,'Doanh Nghiệp');
-            return {tkDoanhNghiep, phieuDangKy}
+            const accessToken = provideJWT (tkDoanhNghiep);
+            return {tkDoanhNghiep, phieuDangKy, accessToken}
         })
 
         return res.status(200).json({
             message : "Lập phiếu và tạo tài khoản thành công",
             phieuDangKy,
-            account : tkDoanhNghiep
+            account : tkDoanhNghiep,
+            accessToken
         })
     }catch (error) {
         console.log("Compnay.c line 31" , error.message) ; 
@@ -213,6 +215,35 @@ const approveSheet = async (req,res,next) => {
     }
 }
 
+const updateSheet = async (req,res,next) => {
+    const {username} = req.userData;
+    const {tencongty, nguoidaidien, diachi, email} = req.body;
+
+
+    try {
+        await prisma.phieudangkythanhvien.update(
+            {
+                where : {
+                    masothue : username
+                },
+                data : {
+                    tencongty : tencongty || undefined,
+                    nguoidaidien : nguoidaidien || undefined,
+                    email : email || undefined ,
+                    diachi : diachi || undefined
+                }
+            }
+        )
+        
+        return res.status (200).json({
+            message : "Thay đổi thành công"
+            
+        })
+    }catch (err) {
+        console.log("Error at regis-sheet.c.js/updateSheet" , err) ; 
+        return next (new HttpsError("Có lỗi khi sửa thông tin phiếu"))
+    }
+}
 
 
 module.exports = {

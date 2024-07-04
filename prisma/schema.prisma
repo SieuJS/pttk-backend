@@ -10,7 +10,7 @@ datasource db {
 model doanhnghiep {
   masothue      String  @id @db.VarChar(10)
   maphieudangky String? @db.VarChar(10)
-  tencongty     String? @unique
+  tencongty     String?
   nguoidaidien  String?
   diachi        String?
   email         String?
@@ -25,12 +25,13 @@ model giahan {
 }
 
 model hoadon {
-  mahoadon           String   @id @db.VarChar(10)
-  tongtien           Decimal? @db.Money
-  sodotthanhtoan     Int?
-  dathanhtoan        Boolean?
-  sotienlai          Decimal? @db.Money
-  trangthaithanhtoan Boolean?
+  mahoadon            String   @id @db.VarChar(10)
+  tongtien            Decimal? @db.Money
+  sodotthanhtoan      Int?
+  dathanhtoan         Boolean?
+  sotienlai           Decimal? @db.Money
+  trangthaithanhtoan  Boolean?
+  ma_phieu_dang_tuyen String?
 }
 
 model hopdong {
@@ -52,15 +53,16 @@ model nhanvien {
 }
 
 model phieudangkythanhvien {
-  maphieudangky    String    @id @db.VarChar(10)
-  ngaydangky       DateTime? @db.Date
-  ngayxetduyet     DateTime? @db.Date
-  masothue         String?   @db.VarChar(10)
-  tencongty        String?   @db.VarChar(255)
-  nguoidaidien     String?   @db.VarChar(255)
-  diachi           String?   @db.VarChar(255)
-  email            String?   @db.VarChar(255)
-  nhanvientiepnhan String?   @db.VarChar(10)
+  maphieudangky    String           @id @db.VarChar(10)
+  ngaydangky       DateTime?        @db.Date
+  ngayxetduyet     DateTime?        @db.Date
+  masothue         String?          @db.VarChar(10)
+  tencongty        String?          @db.VarChar(255)
+  nguoidaidien     String?          @db.VarChar(255)
+  diachi           String?          @db.VarChar(255)
+  email            String?          @db.VarChar(255)
+  nhanvientiepnhan String?          @db.VarChar(10)
+  phieudk_tuchoi   phieudk_tuchoi[]
 }
 
 model phieudangkyungtuyen {
@@ -76,22 +78,26 @@ model phieudangtuyen {
   vitridangtuyen          String?   @db.VarChar(255)
   soluongtuyendung        Int?
   khoangthoigiandangtuyen Int?
-  hinhthucquangcao        String?   @db.VarChar(255)
+  hinhthucdangtuyen       String?   @db.VarChar(255)
   thoigiandangtuyen       DateTime? @db.Timestamp(6)
   thoigianhieuchinh       DateTime? @db.Timestamp(6)
-  maphieudangky           String?   @db.VarChar(10)
   nhanviendangtuyen       String?   @db.VarChar(10)
   doanhnghiep             String?   @db.VarChar(10)
-  loaiquangcao            String?   @db.VarChar(10)
+  donvithoigian           String?
+  trangthaithanhtoan      String?
+  mota                    String?
+  yeucau                  String?
 }
 
 model thanhtoan {
-  lanthanhtoan      String    @id @db.VarChar(10)
+  lanthanhtoan      String    @db.VarChar(10)
   sotienthanhtoan   Decimal?  @db.Money
   ngaythanhtoan     DateTime? @db.Date
   loaithanhtoan     String?   @db.VarChar(255)
-  mahoadon          String?   @db.VarChar(10)
+  mahoadon          String    @db.VarChar(10)
   nhanvienthanhtoan String?   @db.VarChar(10)
+
+  @@id([lanthanhtoan, mahoadon])
 }
 
 model tiemnangdoanhnghiep {
@@ -143,4 +149,14 @@ model Account {
   type     String? @map("loaitk") @db.VarChar(200)
 
   @@map("taikhoan")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model phieudk_tuchoi {
+  maphieu              String               @db.VarChar
+  ngaytuchoi           DateTime             @db.Date
+  ngaychinhsua         DateTime?            @db.Date
+  phieudangkythanhvien phieudangkythanhvien @relation(fields: [maphieu], references: [maphieudangky], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([maphieu, ngaytuchoi])
 }

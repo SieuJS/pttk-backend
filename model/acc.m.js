@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require('bcryptjs');
+const provideJWT = require('../utils/access-token-generater')
 const saltLenght = 10 
 
 const prisma = new PrismaClient().$extends({
@@ -29,7 +30,6 @@ const prisma = new PrismaClient().$extends({
                     console.log("Acc model, line 30 ", err.message);
                     throw Error("There some error occured in create account")
                 }
-                
                 return {
                     username : createdAcc.username,
                     type : createdAcc.type

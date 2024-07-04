@@ -8,6 +8,8 @@ const EmpRoute = require('./routes/emp.r');
 const CompRoute = require('./routes/company.r');
 const AccRoute = require('./routes/acc.r');
 const RegisSheetRoute = require('./routes/regis-sheet.r')
+const HiringSheetRoute = require('./routes/hiring-sheet.r')
+
 // import model
 const HttpsError = require('./model/error.m');
 
@@ -27,6 +29,8 @@ app.use('/api/emp', EmpRoute);
 app.use ('/api/company' ,CompRoute);
 
 app.use('/api/regis-sheet', RegisSheetRoute);
+
+app.use('/api/hiring-sheet', HiringSheetRoute )
 
 // Error routing handling 
 /**
