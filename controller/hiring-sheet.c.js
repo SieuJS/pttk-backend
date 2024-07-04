@@ -37,7 +37,7 @@ exports.createHiringSheet = async (req, res, next) => {
         donvithoigian,
         thoigiandangtuyen: new Date(thoigiandangtuyen).toISOString(), 
         hinhthucdangtuyen: hinhthucdangtuyen.join(','),
-        thoigianhieuchinh: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString(),
+        thoigiantao: new Date().toISOString(),
         mota,
         trangthaithanhtoan: null,
       },

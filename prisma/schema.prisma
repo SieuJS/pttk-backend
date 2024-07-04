@@ -80,7 +80,7 @@ model phieudangtuyen {
   khoangthoigiandangtuyen Int?
   hinhthucdangtuyen       String?   @db.VarChar(255)
   thoigiandangtuyen       DateTime? @db.Timestamp(6)
-  thoigianhieuchinh       DateTime? @db.Timestamp(6)
+  thoigiantao             DateTime? @db.Timestamp(6)
   nhanviendangtuyen       String?   @db.VarChar(10)
   doanhnghiep             String?   @db.VarChar(10)
   donvithoigian           String?
