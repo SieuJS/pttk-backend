@@ -3,7 +3,7 @@ const router = require('express').Router() ;
 const checkAuth = require('../middlewares/check-auth')
 const {kiemTraNhanVienTiepNhan} = require ('../middlewares/check-nhanvien');
 const paginate = require('express-paginate')
-const {createPayment,getPaymentByHiring}= require('../controller/payment.c')
+const {createPayment,getPaymentByHiring, doPayment}= require('../controller/payment.c')
 router.get('/',(req,res,next) => {res.json({message:"hello"})})
 const { body, validationResult } = require('express-validator');
 
@@ -14,6 +14,8 @@ router.post('/create',[
 ] ,createPayment)
 
 
-router.get('/getbyhiring/:maphieudangtuyen',getPaymentByHiring)
+router.get('/getbyhiring/:maphieudangtuyen',getPaymentByHiring);
+
+router.post('/pay', doPayment);
 
 module.exports = router;

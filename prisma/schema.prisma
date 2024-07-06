@@ -90,7 +90,7 @@ model phieudangtuyen {
 }
 
 model thanhtoan {
-  lanthanhtoan      String    @db.VarChar(10)
+  lanthanhtoan      Int       @db.SmallInt
   sotienthanhtoan   Decimal?  @db.Money
   ngaythanhtoan     DateTime? @db.Date
   loaithanhtoan     String?   @db.VarChar(255)

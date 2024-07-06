@@ -77,20 +77,64 @@ exports.createPayment = async (req, res,next) => {
   }
 };
 
-// Get all payments (with pagination - implement as needed)
-exports.getAllPayments = async (req, res) => {
+exports.doPayment = async (req, res,next) => {
+  let {mahoadon , lanthanhtoan, sotienthanhtoan, loaithanhtoan} = req.body; 
   try {
-    // ... (Add pagination logic here using req.query) 
+    let hoadon = await prisma.hoadon.findFirst({
+      where : {
+        mahoadon : mahoadon
+      }
+    })
+    if (!hoadon) {
+      return next (new HttpsError ("Không tồn tại hoá đơn",422))
+    }
+    if (hoadon.trangthaithanhtoan) {
+      return next (new HttpsError ("Hoá đơn đã được thanh toán rồi",422))
 
-    const payments = await prisma.hoadon.findMany({
-      // ... (Apply pagination, sorting, filtering here)
-    });
+    }
+    lanthanhtoan = parseInt(lanthanhtoan) ;
 
-    res.json(payments);
-  } catch (error) {
-    // ... (Handle errors)
+    if (lanthanhtoan !==  parseInt(hoadon.dotdathanhtoan) + 1) {
+      return next (new HttpsError ("Sai đợt thanh toán hoá đơn",422))
+    }
+    sotienthanhtoan = parseInt(sotienthanhtoan) ; 
+    await prisma.$transaction(async (tx) => {
+      let thanhtoan = await tx.thanhtoan.create({
+        data : {
+          mahoadon : mahoadon ,
+          lanthanhtoan : lanthanhtoan , 
+          sotienthanhtoan : sotienthanhtoan,
+          loaithanhtoan : loaithanhtoan,
+          ngaythanhtoan : new Date().toISOString()
+        }
+      })
+      let updateHoaDon ={
+        dotdathanhtoan : lanthanhtoan,
+        sotienconlai : hoadon.sotienconlai - sotienthanhtoan
+      };
+      if (lanthanhtoan === hoadon.sodotthanhtoan) {
+        updateHoaDon = {
+          ...updateHoaDon,
+          trangthaithanhtoan : true
+        }
+      }
+      let update = await tx.hoadon.update({
+        where : {
+          mahoadon : mahoadon
+        },
+        data : updateHoaDon
+      })
+      
+      console.log(update)
+
+    })
+    return res.status(200).json({message : 'Giao dịch thành công'})
+
+  }catch (err) {
+    console.log(err);
+    return next (new HttpsError('Lỗi khong xac định',500))
   }
-};
+}
 
 // Helper function to generate a unique ID 
 
