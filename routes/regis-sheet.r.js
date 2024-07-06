@@ -16,7 +16,6 @@ router.get('/get-all',async (req,res,next)=>{
     const {page, limit} = req.query;
     try {
         data = await prisma.phieudangkythanhvien.findMany({
-            
             skip : req.skip,
             take : limit,
         }
@@ -150,6 +149,7 @@ router.post ('/create',
 router.post('/receive/:sheetid', checkAuth, kiemTraNhanVienTiepNhan, receiveSheet);
 
 router.post('/approve/:sheetid',checkAuth,kiemTraNhanVienTiepNhan,approveSheet);
+
 
 
 

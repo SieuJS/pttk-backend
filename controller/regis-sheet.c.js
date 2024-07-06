@@ -90,7 +90,6 @@ const getReceived = async (req,res,next) => {
             message : "Lấy phiếu tiếp nhận của nhân viên " + username,
             data 
         })
-
     }catch (error) {
         console.log(err); 
         return next (new HttpsError("Lỗi không xác định",500))

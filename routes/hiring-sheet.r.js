@@ -8,6 +8,9 @@ router.use(paginate.middleware(10, 50));
 
 router.get('/get/:maphieudangky', hiringSheetController.getHiringSheetById);
 
+router.get('/price/:maphieudangtuyen',hiringSheetController.estimatePrice) ;
+
+
 router.post('/create',
   [
     body('doanhnghiep').notEmpty().withMessage('Mã số thuế không được bỏ trống'),

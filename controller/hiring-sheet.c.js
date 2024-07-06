@@ -1,10 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const genID = require('../utils/unique-key-gen');
 const HttpsError = require('../model/error.m');
-const {validationResult} = require('express-validator')
+const {validationResult} = require('express-validator');
 const paginate = require('express-paginate');
 const prisma = new PrismaClient();
-
+const PhieuDangTuyen = require('../model/hiring-sheet')
 exports.createHiringSheet = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -12,7 +12,7 @@ exports.createHiringSheet = async (req, res, next) => {
   }
 
   let { doanhnghiep, vitridangtuyen, soluongtuyendung, khoangthoigiandangtuyen, 
-    donvithoigian, thoigiandangtuyen, hinhthucdangtuyen, mota } = req.body;
+    donvithoigian, thoigiandangtuyen, hinhthucdangtuyen, mota, yeucau } = req.body;
 
   try {
     let existsComp = await prisma.doanhnghiep.findFirst({
@@ -26,7 +26,7 @@ exports.createHiringSheet = async (req, res, next) => {
     }
 
     let maphieudangtuyen = "PDT" + genID();
-
+    yeucau = await JSON.stringify(yeucau)
     const newSheet = await prisma.phieudangtuyen.create({
       data: {
         maphieudangtuyen,
@@ -39,6 +39,7 @@ exports.createHiringSheet = async (req, res, next) => {
         hinhthucdangtuyen: hinhthucdangtuyen.join(','),
         thoigiantao: new Date().toISOString(),
         mota,
+        yeucau,
         trangthaithanhtoan: null,
       },
     });
@@ -104,10 +105,30 @@ exports.getHiringSheetById = async (req, res) => {
     if (!hiringSheet) {
       return res.status(404).json({ message: 'Không tìm thấy phiếu đăng ký' });
     }
-
-    res.status(200).json(hiringSheet);
+    let hinhthucdangtuyen = hiringSheet.hinhthucdangtuyen.split(',');
+    let yeucau = JSON.parse(hiringSheet.yeucau)
+    res.status(200).json({
+      message : "Thấy thông tin thành công",
+      data : {
+        ...hiringSheet,
+        hinhthucdangtuyen,
+        yeucau
+      }
+    });
   } catch (error) {
     console.error('Error fetching hiring sheet:', error);
     res.status(500).json({ error: 'Lỗi khi lấy thông tin phiếu đăng ký' });
   }
 };
+
+exports.estimatePrice =async (req,res,next) => {
+  let {maphieudangtuyen} = req.params; 
+  try {
+    let price = await PhieuDangTuyen.tinhTongTien(maphieudangtuyen) ; 
+    return res.json({message : "Tính tiền thành công", data : {total : price}})
+  }
+  catch (err) {
+    console.log(err)
+    return next (new HttpsError('Lỗi khi tính tiền',500))
+  }
+}
