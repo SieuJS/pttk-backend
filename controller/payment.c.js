@@ -1,65 +1,79 @@
 const { PrismaClient } = require('@prisma/client');
 const genID = require('../utils/unique-key-gen');
+const PhieuDangTuyen = require('../model/hiring-sheet')
+const {validationResult} = require('express-validator');
+const HttpsError = require('../model/error.m');
 
 const prisma = new PrismaClient();
 
 // Helper Function: Calculate Total Payment
-async function calculateTotalPayment(phieudangtuyen) {
-    try {
-        let phieudangtuyen_ = prisma.phieudangtuyen.findFirst({
-            where : {
-                maphieudangtuyen : phieudangtuyen
-            }
-        });
+exports.getPaymentByHiring = async (req,res,next) =>{
+  let {maphieudangtuyen} = req.params;
+  try {
+    
+    let hoadon = await prisma.hoadon.findFirst({
+      where : {
+        phieudangtuyen : maphieudangtuyen
+      }
+    })
 
-        if (!phieudangtuyen_) {
-            
-        }
-    }catch (err){
-        console.log(err)
+    if (!hoadon) {
+      return next (new HttpsError('Phiếu đăng tuyển này chưa có hoá đơn',420))
     }
+
+    return  res.status(200).json({message : "Lấy thông tin hoá đơn thành công", data : hoadon})
+  }
+  catch(err){
+    console.log(err)
+    return next(new HttpsError('Lỗi không xác địn khi xem hoá đơn',500))
+  }
 }
 
 // Create a new payment
-exports.createPayment = async (req, res) => {
+exports.createPayment = async (req, res,next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({message : "Nhập sai" , errors: errors.array() });
     }
 
-    const { maphieudangtuyen, sodotthanhtoan, } = req.body;
+    const { maphieudangtuyen, sodotthanhtoan } = req.body;
 
-    // 1. Fetch Job Posting Details
-    const phieudangtuyen = await prisma.phieudangtuyen.findUnique({
-      where: { maphieudangtuyen },
-    });
-    if (!phieudangtuyen) {
-      return res.status(404).json({ error: 'Job posting not found' });
+    let hoadon = await prisma.hoadon.findFirst({
+      where : {
+        phieudangtuyen : maphieudangtuyen
+      }
+    })
+
+    if (hoadon) {
+      return next (new HttpsError('Phiếu đăng tuyển này đã có hoá đơn',420))
     }
 
-    // 2. Calculate Total Payment
-    const tongtien = await calculateTotalPayment(phieudangtuyen);
 
-    // 3. Generate Invoice ID (mahoadon) - use a robust method
+    let tongtien = await PhieuDangTuyen.tinhTongTien(maphieudangtuyen) ;
+
+
+
     const mahoadon = 'HD' + genID(); 
+
+
 
     // 4. Create the Invoice (hoadon)
     const newHoadon = await prisma.hoadon.create({
       data: {
         mahoadon,
         tongtien,
-        maphieudangtuyen: maphieudangtuyen,
-        dathanhtoan : false,
-        sotienlai : tongtien,
-        sodotthanhtoan : sodotthanhtoan
+        phieudangtuyen: maphieudangtuyen,
+        dotdathanhtoan : 0,
+        sotienlai : parseInt(tongtien),
+        sodotthanhtoan : parseInt(sodotthanhtoan)
       },
     });
 
     res.status(201).json(newHoadon);
   } catch (error) {
     console.error('Error creating payment:', error);
-    res.status(500).json({ error: 'Failed to create payment' });
+    res.status(500).json({ message: 'Lỗi khi tạo phiếu' });
   }
 };
 

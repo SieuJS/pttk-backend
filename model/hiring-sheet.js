@@ -16,7 +16,7 @@ const prisma = new PrismaClient().$extends({
 
         let total = 0;
         const loaihinh_ = phieudangtuyen_.hinhthucdangtuyen.split(","); 
-        
+
         for (let i = 0; i < loaihinh_.length; i++) { // Use a for loop for array iteration
           try {
             const dv = await prisma.dichvu.findFirst({
@@ -28,7 +28,6 @@ const prisma = new PrismaClient().$extends({
             
             if (dv) { // Check if dv is found before using its properties
               total += dv.dongia * parseInt(phieudangtuyen_.khoangthoigiandangtuyen);
-              console.log(total)
             } else {
               // Handle cases where no matching "dichvu" is found
               console.warn(`No matching "dichvu" found for tendv: ${loaihinh_[i]}`);

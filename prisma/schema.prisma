@@ -28,10 +28,10 @@ model hoadon {
   mahoadon           String   @id @db.VarChar(10)
   tongtien           Decimal? @db.Money
   sodotthanhtoan     Int?
-  dathanhtoan        Boolean?
-  sotienlai          Decimal? @db.Money
+  sotienconlai       Decimal? @db.Money
   trangthaithanhtoan Boolean?
   phieudangtuyen     String?
+  dotdathanhtoan     Decimal? @db.Decimal
 }
 
 model hopdong {
