@@ -66,11 +66,13 @@ model phieudangkythanhvien {
 }
 
 model phieudangkyungtuyen {
-  maphieuungtuyen String   @id @db.VarChar(10)
-  maungvien       String?  @db.VarChar(10)
+  maphieuungtuyen String
+  maungvien       String
   thoigianbosung  String?
   xuli            Boolean?
   trangthai       Boolean?
+
+  @@id([maphieuungtuyen, maungvien])
 }
 
 model phieudangtuyen {

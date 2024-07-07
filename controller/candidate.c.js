@@ -3,7 +3,6 @@ const {PrismaClient} = require('@prisma/client')
 const genID = require('../utils/unique-key-gen');
 const provideJWTToken = require('../utils/access-token-generater');
 const prisma = new PrismaClient(); 
-const Account = require('../model/acc.m')
 exports.createCandidate = async (req, res, next) => {
     const {matkhau, cccd, hoten, sdt, email, diachi} = req.body ; 
     
@@ -32,7 +31,7 @@ exports.createCandidate = async (req, res, next) => {
                     sdt : sdt
                 }
             })
-            let account = await Account.signUp(email , matkhau, 'Ứng viên');
+            let account = await prisma.account.signUp(email , matkhau, 'Ứng viên');
 
             const accessToken = provideJWTToken(account);
             return {accessToken, account}
@@ -76,11 +75,12 @@ exports.getByEmail = async (req,res,next) => {
 
 exports.applyJob = async (req,res,next) => {
     const userData = req.userData; 
-    const {maphieuungtuyen} = req.params
+    const {maphieudangtuyen} = req.params
+    console.log(maphieudangtuyen)
     try {
     await prisma.phieudangkyungtuyen.create({
         data : {
-            maphieuungtuyen : maphieuungtuyen,
+            maphieuungtuyen : maphieudangtuyen,
             maungvien : userData.username
         }
     })
@@ -92,3 +92,27 @@ exports.applyJob = async (req,res,next) => {
         return next(new HttpsError('Lỗi khi đăng ký'))
     }
 }
+
+exports.isApplied = async (req,res,next) => {
+    const userData = req.userData; 
+    const maphieuungtuyen = req.params;
+    try {
+        let uv_ = await prisma.phieudangkyungtuyen.findMany({
+            where : {
+                maungvien : userData.username
+            }
+        })
+
+        let has = uv_.filter(u => {return u.maphieuungtuyen === maphieuungtuyen})
+        
+        if (!uv_ || !has) {
+            return next( new HttpsError('Chua applied rồi',422));
+        }
+
+        return res.status(200).json({message : "Đã đăng tuyển"})
+    }
+    catch (err) {
+        console.log(err);
+        return next (new HttpsError('Đã applied rồi',500));
+    }
+} 
