@@ -3,16 +3,16 @@ const {PrismaClient} = require('@prisma/client')
 
 const prisma = new PrismaClient(); 
 module.exports = {
-    async checkCongTy (req,res,next){ 
+    async checkCandidate (req,res,next){ 
         let userData = req.userData ; 
-        if (userData.type.toLowerCase() != "doanh nghiệp") {
-            return next (new HttpsError("Bạn không phải là công ty",400));
+        if (userData.type.toLowerCase() != "ứng viên") {
+            return next (new HttpsError("Bạn không phải là ứng viên",400));
         }
         let user ; 
         try {
-            user = await prisma.phieudangkythanhvien.findFirst({
+            user = await prisma.ungvien.findFirst({
                 where : {
-                    masothue : userData.username
+                    email : userData.username
                 }
             })
             if (!user){

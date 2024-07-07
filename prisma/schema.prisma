@@ -110,7 +110,7 @@ model tieuchituyendung {
 }
 
 model tindangtuyen {
-  matin    String    @id @db.Uuid
+  matin    String    @id
   ten      String?   @db.VarChar(255)
   mota     String?   @db.VarChar(2000)
   luong    Float?

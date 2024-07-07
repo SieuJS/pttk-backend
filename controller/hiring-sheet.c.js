@@ -133,3 +133,59 @@ exports.estimatePrice =async (req,res,next) => {
     return next (new HttpsError('Lỗi khi tính tiền',500))
   }
 }
+
+
+exports.getHiringForCompany = async (req, res,next ) => {
+  let masothue = req.userData.username;
+  try {
+    const { maphieudangtuyen, doanhnghiep, vitridangtuyen } = req.body;
+    let { page, limit } = req.query;
+    const whereClause = {};
+
+    let company = await prisma.doanhnghiep.findUnique({
+      where : {
+          masothue : masothue
+      }
+    })
+    console.log(company)
+    if (!company) {
+      return next (new HttpsError("Bạn không tồn tại trong hệ thống",400));
+    }
+
+    if (maphieudangtuyen) {
+      whereClause.maphieudangtuyen = { contains: maphieudangtuyen, mode: 'insensitive' };
+    }
+
+    if (doanhnghiep) {
+      whereClause.doanhnghiep = { contains: doanhnghiep, mode: 'insensitive' };
+    }
+
+    if (vitridangtuyen) {
+      whereClause.vitridangtuyen = { contains: vitridangtuyen, mode: 'insensitive' };
+    }
+
+    const totalCount = await prisma.phieudangtuyen.count({ where: whereClause });
+    const results = await prisma.phieudangtuyen.findMany({
+      where: {
+        ...whereClause,
+        doanhnghiep : masothue
+      },
+      skip: req.skip,
+      take: limit || 3,
+    });
+
+    const pageCount = Math.ceil(totalCount / req.query.limit);
+    res.json({
+      object: 'list',
+      has_more: paginate.hasNextPages(req)(pageCount),
+      data: results,
+      total: totalCount,
+      pageCount,
+      currentPage: page,
+      currentPageSize: results.length
+    });
+  } catch (error) {
+    console.error('Error searching data:', error);
+    res.status(500).json({ error: 'Failed to search data' });
+  }
+}

@@ -10,6 +10,7 @@ const AccRoute = require('./routes/acc.r');
 const RegisSheetRoute = require('./routes/regis-sheet.r')
 const HiringSheetRoute = require('./routes/hiring-sheet.r')
 const PaymentRoute = require('./routes/payment.r')
+const CandidateRoute = require('./routes/candidate.r')
 // import model
 const HttpsError = require('./model/error.m');
 
@@ -33,6 +34,8 @@ app.use('/api/regis-sheet', RegisSheetRoute);
 app.use('/api/hiring-sheet', HiringSheetRoute )
 
 app.use('/api/payment' , PaymentRoute)
+
+app.use('/api/candidate',CandidateRoute)
 
 // Error routing handling 
 /**

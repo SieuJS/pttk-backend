@@ -52,11 +52,7 @@ exports.createPayment = async (req, res,next) => {
 
     let tongtien = await PhieuDangTuyen.tinhTongTien(maphieudangtuyen) ;
 
-
-
     const mahoadon = 'HD' + genID(); 
-
-
 
     // 4. Create the Invoice (hoadon)
     const newHoadon = await prisma.hoadon.create({
@@ -65,7 +61,7 @@ exports.createPayment = async (req, res,next) => {
         tongtien,
         phieudangtuyen: maphieudangtuyen,
         dotdathanhtoan : 0,
-        sotienlai : parseInt(tongtien),
+        sotienconlai : parseInt(tongtien),
         sodotthanhtoan : parseInt(sodotthanhtoan)
       },
     });
@@ -112,6 +108,34 @@ exports.doPayment = async (req, res,next) => {
         dotdathanhtoan : lanthanhtoan,
         sotienconlai : hoadon.sotienconlai - sotienthanhtoan
       };
+      console.log(lanthanhtoan)
+      if (lanthanhtoan === 1) {
+        let phieudangtuyen_ = await tx.phieudangtuyen.findFirst({
+          where : {
+            maphieudangtuyen : hoadon.phieudangtuyen
+          }
+        })
+        let doanhnghiep_ = await tx.doanhnghiep.findFirst({
+          where : {
+            masothue : phieudangtuyen_.doanhnghiep
+          }
+        })
+        await tx.tindangtuyen.create(
+          {
+            data : {
+              matin : hoadon.phieudangtuyen,
+              diachi : doanhnghiep_.diachi,
+              congty : doanhnghiep_.tencongty,
+              ten : doanhnghiep_.tencongty,
+              vitri : phieudangtuyen_.vitridangtuyen,
+              mota : phieudangtuyen_.mota,
+              luong :  10000 * Math.random(),
+              ngaydang : (new Date()).toISOString()
+            }
+          }
+        )
+      }
+
       if (lanthanhtoan === hoadon.sodotthanhtoan) {
         updateHoaDon = {
           ...updateHoaDon,
@@ -125,7 +149,6 @@ exports.doPayment = async (req, res,next) => {
         data : updateHoaDon
       })
       
-      console.log(update)
 
     })
     return res.status(200).json({message : 'Giao dịch thành công'})
