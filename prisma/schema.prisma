@@ -66,11 +66,13 @@ model phieudangkythanhvien {
 }
 
 model phieudangkyungtuyen {
-  maphieuungtuyen String
-  maungvien       String
-  thoigianbosung  String?
-  xuli            Boolean?
-  trangthai       Boolean?
+  maphieuungtuyen  String
+  maungvien        String
+  thoigianungtuyen DateTime? @db.Timestamptz(6)
+  xuli             Boolean?
+  trangthai        String?
+  cv               String?
+  thongbao         String?
 
   @@id([maphieuungtuyen, maungvien])
 }
@@ -130,6 +132,7 @@ model ungvien {
   sdt       String? @db.VarChar(20)
   diachi    String? @db.VarChar(255)
   email     String? @db.VarChar(255)
+  gioitinh  String?
 }
 
 model uudai {

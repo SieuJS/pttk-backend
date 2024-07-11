@@ -93,6 +93,47 @@ exports.searchHiringSheets = async (req, res) => {
   }
 };
 
+exports.searchPostedHiring = async (req, res,next ) => {
+  try {
+    const { matin, congty, diachi } = req.body;
+    let { page, limit } = req.query;
+    const whereClause = {};
+
+    if (matin) {
+      whereClause.matin = { contains: matin, mode: 'insensitive' };
+    }
+
+    if (congty) {
+      whereClause.congty = { contains: congty, mode: 'insensitive' };
+    }
+
+    if (diachi) {
+      whereClause.vitridangtuyen = { contains: diachi, mode: 'insensitive' };
+    }
+
+    const totalCount = await prisma.tindangtuyen.count({ where: whereClause });
+    const results = await prisma.tindangtuyen.findMany({
+      where: whereClause,
+      skip: req.skip,
+      take: limit || 3,
+    });
+
+    const pageCount = Math.ceil(totalCount / req.query.limit);
+    res.json({
+      object: 'list',
+      has_more: paginate.hasNextPages(req)(pageCount),
+      data: results,
+      total: totalCount,
+      pageCount,
+      currentPage: page,
+      currentPageSize: results.length
+    });
+  } catch (error) {
+    console.error('Error searching data:', error);
+    res.status(500).json({ error: 'Failed to search data' });
+  }
+}
+
 exports.getHiringSheetById = async (req, res) => {
   try {
     const { maphieudangky } = req.params;
@@ -188,4 +229,8 @@ exports.getHiringForCompany = async (req, res,next ) => {
     console.error('Error searching data:', error);
     res.status(500).json({ error: 'Failed to search data' });
   }
+}
+
+exports.getHiringForWeb = async (req,res,next) => {
+  
 }

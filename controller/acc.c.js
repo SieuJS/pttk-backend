@@ -22,6 +22,9 @@ async function signIn (req, res,next) {
         if (!bcrypt.compareSync(password, account.password)) {
             return next (new HttpsError("Sai mật khẩu"))
         }
+        if (account.type.toLowerCase().includes('nv')) {
+            return next (new HttpsError('Không thể đăng nhập với tài khoản này'))
+        }
         let accessToken = provideJWT(account)
 
         return res.status(200).json({

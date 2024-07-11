@@ -23,6 +23,8 @@ router.post('/create',
   hiringSheetController.createHiringSheet
 );
 
+router.post('/search-posted', hiringSheetController.searchPostedHiring) 
+
 router.post('/search', hiringSheetController.searchHiringSheets);
 
 module.exports = router;
