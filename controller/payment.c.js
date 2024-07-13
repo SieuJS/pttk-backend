@@ -129,7 +129,7 @@ exports.doPayment = async (req, res,next) => {
               ten : doanhnghiep_.tencongty,
               vitri : phieudangtuyen_.vitridangtuyen,
               mota : phieudangtuyen_.mota,
-              luong :  10000 * Math.random(),
+              luong :  phieudangtuyen_.luong,
               ngaydang : (new Date()).toISOString()
             }
           }
@@ -156,6 +156,30 @@ exports.doPayment = async (req, res,next) => {
   }catch (err) {
     console.log(err);
     return next (new HttpsError('Lỗi khong xac định',500))
+  }
+}
+
+exports.getPaymentDetail = async (req, res, next) => {
+  const {mahoadon} = req.params;
+  
+  if(!mahoadon) {
+    return next (new HttpsError('Bạn chưa cung cấp hoá đơn', 422)) ;
+  }
+  try {
+    let  payments = await prisma.thanhtoan.findMany({
+      where : {
+        mahoadon : mahoadon 
+      }
+    })
+    return res.status(200).json({
+      message : "Lấy thông tin thanh toán thành công"  , 
+      data : {
+        payments
+      }
+    })
+  }  catch (err) {
+    console.log(err) ;
+    return next(new HttpsError('Lỗi không xác định khi lấy thông tin thanh toán'));
   }
 }
 

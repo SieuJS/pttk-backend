@@ -5,6 +5,7 @@ const {validationResult} = require('express-validator');
 const paginate = require('express-paginate');
 const prisma = new PrismaClient();
 const PhieuDangTuyen = require('../model/hiring-sheet')
+
 exports.createHiringSheet = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -13,7 +14,7 @@ exports.createHiringSheet = async (req, res, next) => {
   }
 
   let { doanhnghiep, vitridangtuyen, soluongtuyendung, khoangthoigiandangtuyen, 
-    donvithoigian, thoigiandangtuyen, hinhthucdangtuyen, mota, yeucau } = req.body;
+    donvithoigian, thoigiandangtuyen, hinhthucdangtuyen, mota, yeucau, luong } = req.body;
 
   try {
     let existsComp = await prisma.doanhnghiep.findFirst({
@@ -40,6 +41,7 @@ exports.createHiringSheet = async (req, res, next) => {
         hinhthucdangtuyen: hinhthucdangtuyen.join(','),
         thoigiantao: new Date().toISOString(),
         mota,
+        luong : parseInt(luong),
         yeucau,
         trangthaithanhtoan: null,
       },
@@ -188,7 +190,6 @@ exports.getHiringForCompany = async (req, res,next ) => {
           masothue : masothue
       }
     })
-    console.log(company)
     if (!company) {
       return next (new HttpsError("Bạn không tồn tại trong hệ thống",400));
     }

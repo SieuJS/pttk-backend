@@ -7,7 +7,7 @@ const {checkCandidate} = require('../middlewares/check-candidate');
 
 
 router.use(paginate.middleware(10, 50));
-router.get('/apply-sheet/get',checkAuth, getApplySheet)
+router.post('/apply-sheet/get',checkAuth, getApplySheet);
 router.post('/create', createCandidate) ; 
 router.get('/get/:email', getByEmail);
 router.post('/apply/:maphieudangtuyen',checkAuth, checkCandidate,applyJob);

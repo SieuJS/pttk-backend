@@ -3,12 +3,12 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient().$extends({
   model: {
     phieudangtuyen: {
-      async tinhTongTien({ id }) { // Pass id as an object property
+      async tinhTongTien( id ) { // Pass id as an object property
         const phieudangtuyen_ = await prisma.phieudangtuyen.findFirst({ // Await the findUnique operation
           where: {
             maphieudangtuyen: id,
           },
-        });
+        }); 
 
         if (!phieudangtuyen_) {
           throw new Error("Not found");
@@ -16,7 +16,7 @@ const prisma = new PrismaClient().$extends({
 
         let total = 0;
         const loaihinh_ = phieudangtuyen_.hinhthucdangtuyen.split(","); 
-
+        console.log(loaihinh_);
         for (let i = 0; i < loaihinh_.length; i++) { // Use a for loop for array iteration
           try {
             const dv = await prisma.dichvu.findFirst({
@@ -27,7 +27,7 @@ const prisma = new PrismaClient().$extends({
             });
             
             if (dv) { // Check if dv is found before using its properties
-              total += dv.dongia * parseInt(phieudangtuyen_.khoangthoigiandangtuyen);
+              total += (parseInt(dv.dongia) * parseInt(phieudangtuyen_.khoangthoigiandangtuyen));
             } else {
               // Handle cases where no matching "dichvu" is found
               console.warn(`No matching "dichvu" found for tendv: ${loaihinh_[i]}`);

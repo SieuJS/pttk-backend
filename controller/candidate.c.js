@@ -77,13 +77,15 @@ exports.getByEmail = async (req,res,next) => {
 
 exports.applyJob = async (req,res,next) => {
     const userData = req.userData; 
-    const {maphieudangtuyen, cv} = req.params
+    const {maphieudangtuyen} = req.params
+    const {cv} = req.body;
+    console.log(req.body)
     try {
-    console.log(cv)
     await prisma.phieudangkyungtuyen.create({
         data : {
             maphieuungtuyen : maphieudangtuyen,
             maungvien : userData.username,
+            thoigianungtuyen : (new Date).toISOString(),
             cv : cv,
             trangthai : 'đang xét duyệt',
             thongbao : 'thông tin đang được xử lý bởi nhân viên'
@@ -124,7 +126,26 @@ exports.isApplied = async (req,res,next) => {
 exports.getApplySheet = async (req, res, next) => {
     const {maungvien} = req.userData.username;
     try {
-        let result = await prisma.phieudangkyungtuyen.findMany()
+        let danhsachphieu = await prisma.phieudangkyungtuyen.findMany(
+            {
+                where : {
+                    maungvien : maungvien
+                }
+            }
+        )
+        let result = await danhsachphieu.map (async (phieu) => {
+            let res = await prisma.tindangtuyen.findFirst({
+                where : {
+                    matin : phieu.maphieuungtuyen
+                }
+            })
+            return res;
+        })
+
+        return res.json({message : "lấy dữ liệu", data : {
+            result
+        }
+        })
     }catch(err) {
         console .log(err)
         return next (new HttpsError('Lỗi không xác định ',500))

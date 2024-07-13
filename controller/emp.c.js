@@ -44,6 +44,9 @@ async function signIn (req, res,next) {
                 manv : username
             }
         })
+        if (!empAcc) {
+            return next(new HttpsError('Bạn không phải nhân viên', 422))
+        }
     }
     catch (err ) {
         // 406 - not accept 

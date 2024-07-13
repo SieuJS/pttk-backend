@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 module.exports = {
     async checkCongTy (req,res,next){ 
         let userData = req.userData ; 
-        if (userData.type.toLowerCase() != "doanh nghiệp") {
+        if (userData.type.toLowerCase() !== "doanh nghiệp") {
             return next (new HttpsError("Bạn không phải là công ty",400));
         }
         let user ; 

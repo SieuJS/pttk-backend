@@ -26,7 +26,7 @@ module.exports = function (req, res, next )  {
         req.userData  =  {
             ...decodedToken
         }  
-        next();
+        return next();
 
     }catch (err) {
         return next (new HttpError(err.message, 401));

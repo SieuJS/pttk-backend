@@ -142,7 +142,7 @@ router.post ('/create',
     check('nguoidaidien').notEmpty(),
     check('diachi').notEmpty(), 
     check('email').notEmpty().isEmail(),
-    check('matkhau').isLength({min:5, max : 30}),
+    check('matkhau').isLength({min:3, max : 30}),
     createSheet
 )
 

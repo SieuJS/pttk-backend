@@ -91,6 +91,7 @@ model phieudangtuyen {
   trangthaithanhtoan      String?
   mota                    String?
   yeucau                  String?
+  luong                   Int?
 }
 
 model thanhtoan {
