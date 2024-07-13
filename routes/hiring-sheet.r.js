@@ -22,6 +22,16 @@ router.post('/create',
   ],
   hiringSheetController.createHiringSheet
 );
+router.post('/edit/:id',
+  [
+    body('doanhnghiep').notEmpty().withMessage('Mã số thuế không được bỏ trống'),
+    body('vitridangtuyen').notEmpty().withMessage('Vị trí ứng tuyển không được bỏ trống'),
+    body('soluongtuyendung').isInt({ gt: 0 }).withMessage('Số lượng phải lớn hơn 0'),
+    body('khoangthoigiandangtuyen').notEmpty().withMessage('Khoảng thời gian không được bỏ trống'),
+    body('mota').notEmpty().withMessage('Thông tin yêu cầu không được bỏ trống'),
+  ],
+  hiringSheetController.editHiringSheet
+);
 
 router.post('/search-posted', hiringSheetController.searchPostedHiring) 
 

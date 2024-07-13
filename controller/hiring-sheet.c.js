@@ -54,6 +54,83 @@ exports.createHiringSheet = async (req, res, next) => {
   }
 };
 
+exports.editHiringSheet = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    let errorMessage = errors.array().concat(',');
+    return res.status(400).json({ message: errorMessage });
+  }
+
+  const sheetId = req.params.id; // Assuming you're passing the sheet ID in the request parameters
+  let {
+    doanhnghiep,
+    vitridangtuyen,
+    soluongtuyendung,
+    khoangthoigiandangtuyen,
+    donvithoigian,
+    thoigiandangtuyen,
+    hinhthucdangtuyen,
+    mota,
+    yeucau,
+    luong,
+  } = req.body;
+
+  try {
+    // Check if the company exists
+    let existsComp = await prisma.doanhnghiep.findFirst({
+      where: {
+        masothue: doanhnghiep,
+      },
+    });
+
+    if (!existsComp) {
+      return next(new HttpsError('Mã số thuế không tồn tại', 422));
+    }
+    
+    // Check if the hiring sheet exists
+    const existingSheet = await prisma.phieudangtuyen.findUnique({
+      where: {
+        maphieudangtuyen: sheetId,
+      },
+    });
+
+    if (!existingSheet) {
+      return next(new HttpsError('Không tìm thấy phiếu đăng tuyển', 404));
+    }
+
+    yeucau = await JSON.stringify(yeucau);
+
+    // Update the hiring sheet
+    const updatedSheet = await prisma.phieudangtuyen.update({
+      where: {
+        maphieudangtuyen: sheetId,
+      },
+      data: {
+        doanhnghiep,
+        vitridangtuyen,
+        soluongtuyendung: parseInt(soluongtuyendung),
+        khoangthoigiandangtuyen: parseInt(khoangthoigiandangtuyen),
+        donvithoigian,
+        thoigiandangtuyen: new Date(thoigiandangtuyen).toISOString(),
+        hinhthucdangtuyen: hinhthucdangtuyen.join(','),
+        mota,
+        luong: parseInt(luong),
+        yeucau, 
+        // Note: You might not want to update 'trangthaithanhtoan' here.
+        // Consider handling payment status updates separately.
+      },
+    });
+
+    res.status(200).json({
+      message: 'Cập nhật phiếu đăng tuyển thành công',
+      data: updatedSheet,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Lỗi khi cập nhật phiếu đăng tuyển');
+  }
+};
+
 exports.searchHiringSheets = async (req, res) => {
   try {
     const { maphieudangtuyen, doanhnghiep, vitridangtuyen } = req.body;

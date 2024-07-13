@@ -12,7 +12,6 @@ router.post('/create',[
     body('sodotthanhtoan').isNumeric().withMessage('Thiếu số đợt thanh toán')
 ] ,createPayment)
 
-
 router.get('/getbyhiring/:maphieudangtuyen',getPaymentByHiring);
 
 router.post('/pay', doPayment);
