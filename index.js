@@ -23,6 +23,9 @@ app.use(cors());
 
 app.use(express.json());
 
+app.get('/' , (req,res) => {
+    res.send('<div>HELLO BRO</div>')
+})
 
 app.use('/api/auth', AccRoute);
 

@@ -1,5 +1,7 @@
 {
     "version": 2,
+    "buildCommand": "npx prisma generate && next build",
+      "devCommand": "npm start -p 5000",
     "builds": [
       {
         "src": "index.js",
